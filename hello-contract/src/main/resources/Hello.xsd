@@ -1,0 +1,21 @@
+<schema targetNamespace="http://thomasjohansen.it/hello/types"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <element name="helloRequest">
+        <complexType>
+            <sequence>
+                <element name="greeting" type="string"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="helloResponse">
+        <complexType>
+            <sequence>
+                <element name="greetingResponse" type="string"/>
+            </sequence>
+        </complexType>
+    </element>
+
+</schema>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>it.thomasjohansen.demo</groupId>
+        <artifactId>sso-demo</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>it.thomasjohansen.demo</groupId>
+    <artifactId>hello</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Hello service</name>
+
+    <properties>
+        <cxf.version>3.1.0</cxf.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>it.thomasjohansen.maven</groupId>
+                <artifactId>executable-war-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>it.thomasjohansen.demo</groupId>
+            <artifactId>hello-contract</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-policy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -11,11 +11,14 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.rs.security.saml.sso.RequestAssertionConsumerService;
+import org.apache.cxf.rs.security.saml.sso.SamlRedirectBindingFilter;
+import org.apache.cxf.rs.security.saml.sso.state.EHCacheSPStateManager;
+import org.apache.cxf.rs.security.saml.sso.state.SPStateManager;
 import org.apache.cxf.ws.security.trust.STSClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.xml.namespace.QName;
@@ -33,12 +36,8 @@ import java.util.Map;
 @ImportResource("classpath:applicationContext.xml")
 public class SpringCxfConfig {
 
-//    @Autowired
-//    private MerchantProvisioningAudit wsService;
     @Autowired
     private HelloResource rsService;
-//    @Autowired
-//    private ConnectionFactory jmsConnectionFactory;
 
     @Bean
     public Bus cxf() {
@@ -46,12 +45,44 @@ public class SpringCxfConfig {
     }
 
     @Bean
+    public SamlRedirectBindingFilter redirectGetFilter() {
+        SamlRedirectBindingFilter filter = new SamlRedirectBindingFilter();
+        filter.setIdpServiceAddress("https://thomasjohansen.it/adfs/ls/");
+        filter.setAssertionConsumerServiceAddress("http://thomasjohansen.it:8443/racs/sso");
+        filter.setStateProvider(stateManager());
+        return filter;
+    }
+
+    @Bean
+    public RequestAssertionConsumerService requestAssertionConsumerService() {
+        RequestAssertionConsumerService service = new RequestAssertionConsumerService();
+        service.setStateProvider(stateManager());
+        service.setSupportBase64Encoding(false);
+        return service;
+    }
+
+    @Bean
+    public SPStateManager stateManager() {
+        return new EHCacheSPStateManager(cxf());
+    }
+
+    @Bean
     public Server jaxRsService() {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setBus(cxf());
         factory.setProvider(jacksonJaxbJsonProvider());
+        factory.setProvider(redirectGetFilter());
         factory.setServiceBean(rsService);
         factory.setAddress("/rs");
+        return factory.create();
+    }
+
+    @Bean
+    public Server jaxRsRequestAssertionConsumerService() {
+        JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
+        factory.setBus(cxf());
+        factory.setServiceBean(requestAssertionConsumerService());
+        factory.setAddress("/racs");
         return factory.create();
     }
 
@@ -60,8 +91,7 @@ public class SpringCxfConfig {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setBus(cxf());
         factory.setServiceClass(HelloPort.class);
-//        factory.setAddress("https://localhost:8080/hello");
-        factory.setAddress("https://localhost:8084/app/provisioning/merchant");
+        factory.setAddress("https://hello.thomasjohansen.it:8080/hello");
         factory.setServiceName(
                 new QName("http://thomasjohansen.it/hello", "HelloService")
         );
@@ -88,7 +118,7 @@ public class SpringCxfConfig {
         // Key type specifies which type of key should be used for encrypting and signing the token. Default is
         // symmetric according to WS-Trust.
         stsClient.setKeyType("http://docs.oasis-open.org/ws-sx/ws-trust/200512/SymmetricKey");
-        stsClient.setWsdlLocation("https://federation.test.payex.com/adfs/services/trust/mex");
+        stsClient.setWsdlLocation("https://thomasjohansen.it/adfs/services/trust/mex");
         stsClient.setEndpointQName(new QName(
                 "http://schemas.microsoft.com/ws/2008/06/identity/securitytokenservice",
                 "UserNameWSTrustBinding_IWSTrust13Async"
@@ -112,38 +142,6 @@ public class SpringCxfConfig {
 //        stsClient.setTtl(300);
         return stsClient;
     }
-
-//    @Bean
-//    public Server jaxWsService() {
-//        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
-//        factory.setBus(cxf());
-//        factory.setServiceClass(MerchantProvisioningAuditWebService.class);
-//        factory.setServiceBean(wsService);
-//        factory.setAddress("/");
-//        factory.setProperties(jaxwsProperties());
-//        return factory.create();
-//    }
-
-//    @Bean
-//    public Object jaxWsJmsService() {
-//        EndpointImpl ep = (EndpointImpl) Endpoint.create(wsService);
-//        ep.getFeatures().add(new ConnectionFactoryFeature(jmsConnectionFactory));
-//        ep.publish("jms:queue:PosPay.Provisioning.Merchant.Notify");
-//        return null;
-//    }
-
-//    private Map<String, Object> jaxwsProperties() {
-//        Map<String, Object> properties = new HashMap<>();
-//        // This specifies the key used for decrypting symmetric key in SAML tokens
-//        properties.put("ws-security.signature.properties", "/symmetric-key-crypto.properties");
-//        // Password used for key in keystore above is supplied by this callback handler (not Merlin props, which
-//        // provides password for keystore) TODO: Try with different passwords!
-//        properties.put("ws-security.callback-handler", "com.payex.provisioning.merchant.ws.PasswordCallbackHandler");
-//        // Microsoft Active Directory Federation Services 3.0 is not compliant with Basic Security Profile
-//        // rule 5426. See https://issues.apache.org/jira/browse/WSS-519.
-//        properties.put("ws-security.is-bsp-compliant", "false");
-//        return properties;
-//    }
 
     @Bean
     public JacksonJaxbJsonProvider jacksonJaxbJsonProvider() {

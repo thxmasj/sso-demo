@@ -20,21 +20,23 @@
     </http:conduit>
 
     <!-- For stsClient.endpointName transport -->
-    <http:conduit name="{http://schemas.microsoft.com/ws/2008/06/identity/securitytokenservice}UserNameWSTrustBinding_IWSTrust13Async.http-conduit">
-        <http:tlsClientParameters disableCNCheck="true">
-            <sec:trustManagers>
-                <sec:keyStore type="jks" password="changeit" resource="sts-trust-ssl.jks"/>
-            </sec:trustManagers>
-        </http:tlsClientParameters>
-    </http:conduit>
+    <!-- Required if STS is not using a public CA signed certificate -->
+    <!--<http:conduit name="{http://schemas.microsoft.com/ws/2008/06/identity/securitytokenservice}UserNameWSTrustBinding_IWSTrust13Async.http-conduit">-->
+        <!--<http:tlsClientParameters disableCNCheck="true">-->
+            <!--<sec:trustManagers>-->
+                <!--<sec:keyStore type="jks" password="changeit" resource="sts-trust-ssl.jks"/>-->
+            <!--</sec:trustManagers>-->
+        <!--</http:tlsClientParameters>-->
+    <!--</http:conduit>-->
 
     <!-- For stsClient.wsdlLocation transport -->
-    <http:conduit name="{http://cxf.apache.org}TransportURIResolver.http-conduit">
-        <http:tlsClientParameters disableCNCheck="true">
-            <sec:trustManagers>
-                <sec:keyStore type="jks" password="changeit" resource="sts-trust-ssl.jks"/>
-            </sec:trustManagers>
-        </http:tlsClientParameters>
-    </http:conduit>
+    <!-- Required if STS is not using a public CA signed certificate -->
+    <!--<http:conduit name="{http://cxf.apache.org}TransportURIResolver.http-conduit">-->
+        <!--<http:tlsClientParameters disableCNCheck="true">-->
+            <!--<sec:trustManagers>-->
+                <!--&lt;!&ndash;<sec:keyStore type="jks" password="changeit" resource="sts-trust-ssl.jks"/>&ndash;&gt;-->
+            <!--</sec:trustManagers>-->
+        <!--</http:tlsClientParameters>-->
+    <!--</http:conduit>-->
 
 </beans>

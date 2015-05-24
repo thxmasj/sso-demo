@@ -5,7 +5,8 @@
                   xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
                   xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"
                   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:t="http://docs.oasis-open.org/ws-sx/ws-trust/200512/">
 
     <wsp:Policy wsu:Id="SamlPolicy">
         <sp:TransportBinding>
@@ -32,6 +33,11 @@
                 <sp:IssuedToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                     <sp:RequestSecurityTokenTemplate>
                         <!--<wst:TokenType>urn:oasis:names:tc:SAML:2.0:assertion</wst:TokenType>-->
+                        <!--<t:Claims Dialect="http://schemas.xmlsoap.org/ws/2005/05/identity"-->
+                                  <!--xmlns:ic="http://schemas.xmlsoap.org/ws/2005/05/identity">-->
+                            <!--<ic:ClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"-->
+                                          <!--Optional="false"/>-->
+                        <!--</t:Claims>-->
                     </sp:RequestSecurityTokenTemplate>
                     <wsp:Policy>
                         <sp:RequireInternalReference/>

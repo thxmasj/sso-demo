@@ -36,8 +36,7 @@ public class SpringCxfConfig {
         factory.setServiceName(
                 new QName("http://thomasjohansen.it/hello", "HelloService")
         );
-//        factory.setAddress("/hello");
-        factory.setAddress("/provisioning/merchant");
+        factory.setAddress("/hello");
         factory.setProperties(jaxwsProperties());
         return factory.create();
     }
@@ -45,10 +44,10 @@ public class SpringCxfConfig {
     private Map<String, Object> jaxwsProperties() {
         Map<String, Object> properties = new HashMap<>();
         // This specifies the key used for decrypting symmetric key in SAML tokens
-        properties.put("ws-security.signature.properties", "/symmetric-key-crypto.properties");
+        properties.put("security.signature.properties", "/sts-crypto.properties");
         // Password used for key in keystore above is supplied by this callback handler (not Merlin props, which
         // provides password for keystore) TODO: Try with different passwords!
-        properties.put("ws-security.callback-handler", PasswordCallbackHandler.class.getName());
+        properties.put("security.callback-handler", PasswordCallbackHandler.class.getName());
         // Microsoft Active Directory Federation Services 3.0 is not compliant with Basic Security Profile
         // rule 5426. See https://issues.apache.org/jira/browse/WSS-519.
         properties.put("ws-security.is-bsp-compliant", "false");

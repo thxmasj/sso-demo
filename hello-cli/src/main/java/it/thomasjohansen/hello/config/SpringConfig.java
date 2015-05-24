@@ -5,6 +5,7 @@ import it.thomasjohansen.hello.cli.CredentialsInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.apache.cxf.ws.security.trust.STSClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,12 +34,14 @@ public class SpringConfig {
         factory.setBus(cxf());
         factory.setServiceClass(HelloPort.class);
 //        factory.setAddress("https://localhost:8080/hello");
-        factory.setAddress("https://localhost:8084/app/provisioning/merchant");
+        factory.setAddress("https://hello.thomasjohansen.it:8080/hello");
         factory.setServiceName(
                 new QName("http://thomasjohansen.it/hello", "HelloService")
         );
         factory.setWsdlLocation("Hello.wsdl");
         factory.setProperties(jaxWsProperties());
+        // STS client loses AppliesTo without this.
+        factory.getFeatures().add(new WSAddressingFeature());
         return (HelloPort)factory.create();
     }
 
@@ -60,7 +63,7 @@ public class SpringConfig {
         // Key type specifies which type of key should be used for encrypting and signing the token. Default is
         // symmetric according to WS-Trust.
         stsClient.setKeyType("http://docs.oasis-open.org/ws-sx/ws-trust/200512/SymmetricKey");
-        stsClient.setWsdlLocation("https://federation.test.payex.com/adfs/services/trust/mex");
+        stsClient.setWsdlLocation("https://thomasjohansen.it/adfs/services/trust/mex");
         stsClient.setEndpointQName(new QName(
                 "http://schemas.microsoft.com/ws/2008/06/identity/securitytokenservice",
                 "UserNameWSTrustBinding_IWSTrust13Async"

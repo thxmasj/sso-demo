@@ -33,11 +33,11 @@
                 <sp:IssuedToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                     <sp:RequestSecurityTokenTemplate>
                         <!--<wst:TokenType>urn:oasis:names:tc:SAML:2.0:assertion</wst:TokenType>-->
-                        <!--<t:Claims Dialect="http://schemas.xmlsoap.org/ws/2005/05/identity"-->
-                                  <!--xmlns:ic="http://schemas.xmlsoap.org/ws/2005/05/identity">-->
-                            <!--<ic:ClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"-->
-                                          <!--Optional="false"/>-->
-                        <!--</t:Claims>-->
+                        <t:Claims Dialect="http://schemas.xmlsoap.org/ws/2005/05/identity"
+                                  xmlns:ic="http://schemas.xmlsoap.org/ws/2005/05/identity">
+                            <ic:ClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+                                          Optional="false"/>
+                        </t:Claims>
                     </sp:RequestSecurityTokenTemplate>
                     <wsp:Policy>
                         <sp:RequireInternalReference/>

@@ -110,12 +110,12 @@
                         <target>1.7</target>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>it.thomasjohansen.maven</groupId>
-                    <artifactId>executable-war-maven-plugin</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                    <extensions>true</extensions>
-                </plugin>
+                <!--<plugin>-->
+                    <!--<groupId>it.thomasjohansen.maven</groupId>-->
+                    <!--<artifactId>cloud-war-maven-plugin</artifactId>-->
+                    <!--<version>1.0</version>-->
+                    <!--<extensions>true</extensions>-->
+                <!--</plugin>-->
             </plugins>
         </pluginManagement>
     </build>

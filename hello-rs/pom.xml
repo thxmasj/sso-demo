@@ -2,12 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>sso-demo</artifactId>
         <groupId>it.thomasjohansen.demo</groupId>
+        <artifactId>sso-demo</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
     <artifactId>hello-rs</artifactId>
     <packaging>war</packaging>
     <name>Hello REST API</name>
@@ -16,8 +19,14 @@
         <plugins>
             <plugin>
                 <groupId>it.thomasjohansen.maven</groupId>
-                <artifactId>executable-war-maven-plugin</artifactId>
+                <artifactId>cloud-war-maven-plugin</artifactId>
+                <version>1.1-SNAPSHOT</version>
+                <extensions>true</extensions>
                 <configuration>
+                    <engine>tomcat</engine>
+                    <port>8081</port>
+                    <contextPath>/</contextPath>
+                    <keyStorePath>/tls.jks</keyStorePath>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
@@ -65,12 +74,22 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-security-sso-saml</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-servlet_3.0_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
 

@@ -11,6 +11,8 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.rs.security.saml.sso.AuthnRequestBuilder;
+import org.apache.cxf.rs.security.saml.sso.DefaultAuthnRequestBuilder;
 import org.apache.cxf.rs.security.saml.sso.RequestAssertionConsumerService;
 import org.apache.cxf.rs.security.saml.sso.SamlRedirectBindingFilter;
 import org.apache.cxf.rs.security.saml.sso.state.EHCacheSPStateManager;
@@ -48,16 +50,34 @@ public class SpringCxfConfig {
     public SamlRedirectBindingFilter redirectGetFilter() {
         SamlRedirectBindingFilter filter = new SamlRedirectBindingFilter();
         filter.setIdpServiceAddress("https://thomasjohansen.it/adfs/ls/");
-        filter.setAssertionConsumerServiceAddress("http://thomasjohansen.it:8443/racs/sso");
+        // Issuer value in AuthnResponse must match this value
+//        filter.setIdpServiceAddress("https://thomasjohansen.it/adfs/services/trust");
+        filter.setAssertionConsumerServiceAddress("https://hello.thomasjohansen.it:8081/rs/racs/sso");
         filter.setStateProvider(stateManager());
+        filter.setAuthnRequestBuilder(authnRequestBuilder());
+        // Without this "path" in security context cookie is set to "", which makes the
+        // browser ignore it (is this a bug?).
+        filter.setAddWebAppContext(false);
         return filter;
+    }
+
+    @Bean
+    public AuthnRequestBuilder authnRequestBuilder() {
+        ADFSAuthnRequestBuilder builder = new ADFSAuthnRequestBuilder();
+        return builder;
     }
 
     @Bean
     public RequestAssertionConsumerService requestAssertionConsumerService() {
         RequestAssertionConsumerService service = new RequestAssertionConsumerService();
         service.setStateProvider(stateManager());
-        service.setSupportBase64Encoding(false);
+        // For verifying signature
+        service.setSignaturePropertiesFile("sts-crypto.properties");
+        // For decrypting assertions
+        service.setCallbackHandler(new PasswordCallbackHandler());
+        // Whether the Issuer of the Response (and child Assertions) is "known" to the RACS. This value is compared against the IDP URL configured on the filter. The default value is true.
+        // Issuer value: http://thomasjohansen.it/adfs/services/trust does not match issuer IDP: https://thomasjohansen.it/adfs/ls/
+        service.setEnforceKnownIssuer(false);
         return service;
     }
 
@@ -70,8 +90,8 @@ public class SpringCxfConfig {
     public Server jaxRsService() {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setBus(cxf());
-        factory.setProvider(jacksonJaxbJsonProvider());
         factory.setProvider(redirectGetFilter());
+        factory.setProvider(jacksonJaxbJsonProvider());
         factory.setServiceBean(rsService);
         factory.setAddress("/rs");
         return factory.create();
@@ -82,7 +102,7 @@ public class SpringCxfConfig {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setBus(cxf());
         factory.setServiceBean(requestAssertionConsumerService());
-        factory.setAddress("/racs");
+        factory.setAddress("/rs/racs");
         return factory.create();
     }
 
